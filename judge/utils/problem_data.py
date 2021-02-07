@@ -64,6 +64,12 @@ class ProblemDataCompiler(object):
             cases.append(batch)
 
         def make_checker(case):
+            if case.checker == 'custom':
+                checker_path = split_path_first(case.checker_file.name)
+                if len(checker_path) != 2:
+                    raise ProblemDataError(_('Checker file path is invalid %s') % case.checker_file.name)
+                return checker_path[1]
+
             if case.checker_args:
                 return {
                     'name': case.checker,

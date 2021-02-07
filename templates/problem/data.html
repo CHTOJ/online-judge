@@ -106,7 +106,15 @@
                 handle_table_reorder();
             }
 
+            function checker_file($checker, $checker_file) {
+                $tr = $checker_file.parent().parent();
+                $checker.change(function () {
+                    $tr.toggle($checker.val().startsWith('custom')).change();
+                }).change();
+            }
+
             checker_precision($('#id_problem-data-checker'));
+            checker_file($('#id_problem-data-checker'), $('#id_problem-data-checker_file'));
 
             $table.on('add-row', function (e, $tr) {
                 var $order = $tr.find('input').filter('[id$=order]').attr('type', 'hidden').val(++order);
