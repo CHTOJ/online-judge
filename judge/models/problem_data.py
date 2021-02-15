@@ -29,7 +29,8 @@ CHECKERS = (
     ('sorted', _('Unordered')),
     ('identical', _('Byte identical')),
     ('linecount', _('Line-by-line')),
-    ('custom', _('Customer checker'))
+    ('custom_py', _('Customer checker') + ' (Python)'),
+    ('custom_cpp', _('Customer checker') + ' (CPP)'),
 )
 
 
@@ -48,7 +49,7 @@ class ProblemData(models.Model):
                                     help_text=_('checker arguments as a JSON object'))
     checker_file = models.FileField(verbose_name=_('checker file'), storage=problem_data_storage, null=True,
                                     blank=True, upload_to=problem_directory_file,
-                                    validators=[FileExtensionValidator(allowed_extensions=['py'])])
+                                    validators=[FileExtensionValidator(allowed_extensions=['py', 'cpp'])])
 
     __original_zipfile = None
 
