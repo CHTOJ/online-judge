@@ -81,9 +81,13 @@ register_patterns = [
     url(r'^2fa/webauthn/delete/(?P<pk>\d+)$', two_factor.WebAuthnDeleteView.as_view(), name='webauthn_delete'),
     url(r'^2fa/scratchcode/generate/$', user.generate_scratch_codes, name='generate_scratch_codes'),
 
-    url(r'api/token/generate/$', user.generate_api_token, name='generate_api_token'),
-    url(r'api/token/remove/$', user.remove_api_token, name='remove_api_token'),
 ]
+
+if settings.DMOJ_ENABLE_USER_API_TOKEN:
+    register_patterns.extend([
+        url(r'api/token/generate/$', user.generate_api_token, name='generate_api_token'),
+        url(r'api/token/remove/$', user.remove_api_token, name='remove_api_token'),
+    ])
 
 
 def exception(request):

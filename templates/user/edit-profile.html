@@ -104,49 +104,51 @@
                 alert("The administrators for this site require all the staff to have Two-factor Authentication enabled, so it may not be disabled at this time.");
             });
 
-            $('#generate-api-token-button').click(function (event) {
-                event.preventDefault();
-                if (confirm("{{ _('Are you sure you want to generate or regenerate your API token?') }}\n"
-                          + "{{ _('This will invalidate any previous API tokens.') }} "
-                          + "{{ _('It also allows access to your account without Two-factor Authentication.') }}\n\n"
-                          + "{{ _('You will not be able to view your api token after you leave this page!') }}")) {
-                    $('#api-token').text("{{ _('Generating...') }}");
+            {% if enable_api_token %}
+                $('#generate-api-token-button').click(function (event) {
+                    event.preventDefault();
+                    if (confirm("{{ _('Are you sure you want to generate or regenerate your API token?') }}\n"
+                              + "{{ _('This will invalidate any previous API tokens.') }} "
+                              + "{{ _('It also allows access to your account without Two-factor Authentication.') }}\n\n"
+                              + "{{ _('You will not be able to view your api token after you leave this page!') }}")) {
+                        $('#api-token').text("{{ _('Generating...') }}");
 
-                    $.ajax({
-                        type: 'POST',
-                        url: $(this).attr('href'),
-                        dataType: 'json',
-                        success: function(data) {
-                            $('#api-token').text(data.data.token);
-                            $('#generate-api-token-button').text("{{ _('Regenerate') }}");
+                        $.ajax({
+                            type: 'POST',
+                            url: $(this).attr('href'),
+                            dataType: 'json',
+                            success: function(data) {
+                                $('#api-token').text(data.data.token);
+                                $('#generate-api-token-button').text("{{ _('Regenerate') }}");
 
-                            // Add remove button on-the-fly
-                            if ($('#remove-api-token-button').length == 0) {
-                                $('#generate-api-token-button').after($('<a id="remove-api-token-button" \
-                                    href="{{ url('remove_api_token') }}" \
-                                    class="button inline-button ml-5">{{ _('Remove') }}</a>'));
-                            }
-                        },
-                    });
-                }
-            });
+                                // Add remove button on-the-fly
+                                if ($('#remove-api-token-button').length == 0) {
+                                    $('#generate-api-token-button').after($('<a id="remove-api-token-button" \
+                                        href="{{ url('remove_api_token') }}" \
+                                        class="button inline-button ml-5">{{ _('Remove') }}</a>'));
+                                }
+                            },
+                        });
+                    }
+                });
 
-            // Delegated event handler because the remove button may have been added on-the-fly
-            $('#api-token-td').on('click', '#remove-api-token-button', function (event) {
-                event.preventDefault();
-                if (confirm("{{ _('Are you sure you want to remove your API token?') }}")) {
-                    $.ajax({
-                        type: 'POST',
-                        url: $(this).attr('href'),
-                        dataType: 'json',
-                        success: function(data) {
-                            $('#api-token').text('');
-                            $('#generate-api-token-button').text("{{ _('Generate') }}");
-                            $('#remove-api-token-button').remove();
-                        },
-                    });
-                }
-            });
+                // Delegated event handler because the remove button may have been added on-the-fly
+                $('#api-token-td').on('click', '#remove-api-token-button', function (event) {
+                    event.preventDefault();
+                    if (confirm("{{ _('Are you sure you want to remove your API token?') }}")) {
+                        $.ajax({
+                            type: 'POST',
+                            url: $(this).attr('href'),
+                            dataType: 'json',
+                            success: function(data) {
+                                $('#api-token').text('');
+                                $('#generate-api-token-button').text("{{ _('Generate') }}");
+                                $('#remove-api-token-button').remove();
+                            },
+                        });
+                    }
+                });
+            {% endif %}
         });
     </script>
     <script>
@@ -382,20 +384,22 @@ You will not be able to view your scratch codes after you leave this page!') }}"
                     </div>
                 </div>
                 <div class="pane">
-                    <span id="api-token-td" class="inline-header grayed">
-                        {{ _('API Token') }}:
-                        {% if profile.api_token %}
-                            <a id="generate-api-token-button" href="{{ url('generate_api_token') }}"
-                                class="button inline-button">{{ _('Regenerate') }}</a>
-                            <a id="remove-api-token-button" href="{{ url('remove_api_token') }}"
-                                class="button inline-button ml-5">{{ _('Remove') }}</a>
-                            <div class="api-token" id="api-token">{{ _('Hidden') }}</div>
-                        {% else %}
-                            <a id="generate-api-token-button" href="{{ url('generate_api_token') }}"
-                                class="button inline-button">{{ _('Generate') }}</a>
-                            <div class="api-token" id="api-token"></div>
-                        {% endif %}
-                    </span>
+                    {% if enable_api_token %}
+                        <span id="api-token-td" class="inline-header grayed">
+                            {{ _('API Token') }}:
+                            {% if profile.api_token %}
+                                <a id="generate-api-token-button" href="{{ url('generate_api_token') }}"
+                                    class="button inline-button">{{ _('Regenerate') }}</a>
+                                <a id="remove-api-token-button" href="{{ url('remove_api_token') }}"
+                                    class="button inline-button ml-5">{{ _('Remove') }}</a>
+                                <div class="api-token" id="api-token">{{ _('Hidden') }}</div>
+                            {% else %}
+                                <a id="generate-api-token-button" href="{{ url('generate_api_token') }}"
+                                    class="button inline-button">{{ _('Generate') }}</a>
+                                <div class="api-token" id="api-token"></div>
+                            {% endif %}
+                        </span>
+                    {% endif %}
                     <br>
                     <span class="inline-header grayed">
                     {% if HAS_WEBAUTHN %}

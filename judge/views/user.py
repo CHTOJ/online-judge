@@ -399,6 +399,7 @@ def edit_profile(request):
         'require_staff_2fa': settings.DMOJ_REQUIRE_STAFF_2FA,
         'form': form, 'title': _('Edit profile'), 'profile': request.profile,
         'can_download_data': bool(settings.DMOJ_USER_DATA_DOWNLOAD),
+        'enable_api_token': bool(settings.DMOJ_ENABLE_USER_API_TOKEN),
         'has_math_config': bool(settings.MATHOID_URL),
         'ignore_user_script': True,
         'TIMEZONE_MAP': tzmap or 'http://momentjs.com/static/img/world.png',
